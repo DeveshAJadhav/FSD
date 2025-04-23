@@ -1,39 +1,49 @@
 const fs1 = require('fs');
 const http = require('http');
 
-http.createServer(function (req, res) {
-  
-fs1.readFile('a.txt', function (err, data1) {
-    if (err) {
-        res.write('Not found');
-        res.end();
-        return;
-    }
-        
-   
-fs1.readFile('b.txt', function (err, data2) {
-    if (err) {
-        res.write('Not Found');
-        res.end();
-        return;
-    }
-            
-          
-const p = data1 + '\n' + data2;
 
-            
-fs1.appendFile('c.txt',p,function (err) {
+http.createServer(function (req, res) {
+
+    if (req.url !== '/append') {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('Not Found');
+        return;
+    }
+
+    fs1.readFile('a.txt', function (err, data1) {
+        if (err) {
+            res.write('File a.txt Not Found');
+            res.end();
+            return;
+        }
+
+        fs1.readFile('b.txt', function (err, data2) {
+            if (err) {
+                res.write('File b.txt Not Found');
+                res.end();
+                return;
+            }
+
+            const p = data1 + '\n' + data2;
+
+            fs1.appendFile('c.txt', p, function (err) {
                 if (err) {
-                    res.write('Not Found');
+                    res.write('Error appending to c.txt');
                 } else {
-                    res.write('Files have appended!');
+                    res.write('Files have been appended!');
                 }
                 res.end();
             });
         });
     });
-}).listen(8223);
+}).listen(8227, () => {
+    console.log("Server is running on http://localhost:8227/append");
+});
 
+
+
+
+RUN FILE AS localhost:8227/append
 
 
 
